@@ -67,16 +67,16 @@ void print_error_5(int status)
     print_error_6(status);
 }
 
-char **add_env(struct data data)
+char **add_env(struct data data, int command)
 {
     int j = 0;
 
     for (; data.env[j] != NULL; j++);
     data.env[j] = malloc(sizeof(char) * 20);
-    data.env[j] = my_strcpy(data.env[j], data.args[1]);
+    data.env[j] = my_strcpy(data.env[j], data.args[command][1]);
     data.env[j] = my_strcat(data.env[j], "=");
-    for (int i = 2; i <= data.nbr_args; i++)
-        data.env[j] = my_strcat(data.env[j], data.args[i]);
+    for (int i = 2; i <= data.nbr_args[command]; i++)
+        data.env[j] = my_strcat(data.env[j], data.args[command][i]);
     data.env[j + 1] = 0;
     return (data.env);
 }

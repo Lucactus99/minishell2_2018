@@ -16,7 +16,7 @@ int find_path(char **env, int j)
     return (j);
 }
 
-char **put_path(struct data data)
+char **put_path(struct data data, int command)
 {
     int j = 0;
 
@@ -28,7 +28,7 @@ char **put_path(struct data data)
         }
     } else
         data.env[0] = malloc(sizeof(char) * 40);
-    for (int i = 0; i < data.nbr_args; i++) {
+    for (int i = 0; i < data.nbr_args[command]; i++) {
         if (i == 0) {
             data.env[j] = my_strcpy(data.env[j], data.path[i]);
             data.env[j] = my_strcat(data.env[j], "=");
@@ -38,7 +38,7 @@ char **put_path(struct data data)
     return (data.env);
 }
 
-char **modify_path(struct data data)
+char **modify_path(struct data data, int command)
 {
     if (data.path[0] != NULL) {
         for (int i = 0; data.path[i + 1] != 0; i++) {
@@ -46,12 +46,12 @@ char **modify_path(struct data data)
             free(data.path[i]);
         }
     }
-    for (int i = 0; i < data.nbr_args; i++)
+    for (int i = 0; i < data.nbr_args[command]; i++)
         data.path[i] = malloc(sizeof(char) * 20);
-    for (int i = 0; i < data.nbr_args; i++)
-        data.path[i] = my_strcpy(data.path[i], data.args[i + 1]);
-    data.path[data.nbr_args] = NULL;
-    data.env = put_path(data);
+    for (int i = 0; i < data.nbr_args[command]; i++)
+        data.path[i] = my_strcpy(data.path[i], data.args[command][i + 1]);
+    data.path[data.nbr_args[command]] = NULL;
+    data.env = put_path(data, command);
     return (data.path);
 }
 

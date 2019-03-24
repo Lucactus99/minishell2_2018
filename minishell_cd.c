@@ -7,7 +7,7 @@
 
 #include "my.h"
 
-int cd_home_command(struct data data)
+int cd_home_command(struct data data, int command)
 {
     char pwd[128];
 
@@ -17,7 +17,7 @@ int cd_home_command(struct data data)
         if (errno == 14)
             my_putstr_err("cd: No home directory.\n");
         else if (errno == 20) {
-            my_putstr_err(data.args[1]);
+            my_putstr_err(data.args[command][1]);
             my_putstr_err(": Not a directory.\n");
         } else {
             my_putstr_err(get_home(data.env));
@@ -62,20 +62,20 @@ void print_cd_err(char *str)
     }
 }
 
-int cd_command(struct data data)
+int cd_command(struct data data, int command)
 {
     char pwd[128];
 
-    if (data.args[1] == NULL || my_strcmp(data.args[1], "~") == 0)
-        return (cd_home_command(data));
-    else if (my_strcmp(data.args[1], "-") == 0)
+    if (data.args[command][1] == NULL || my_strcmp(data.args[command][1], "~") == 0)
+        return (cd_home_command(data, command));
+    else if (my_strcmp(data.args[command][1], "-") == 0)
         return (cd_old_command(data));
     else {
         getcwd(pwd, sizeof(pwd));
-        if (my_strcmp(data.args[1], ".") != 0)
+        if (my_strcmp(data.args[command][1], ".") != 0)
             data.env = put_old_pwd(data.env, pwd);
-        if (chdir(data.args[1]) < 0) {
-            print_cd_err(data.args[1]);
+        if (chdir(data.args[command][1]) < 0) {
+            print_cd_err(data.args[command][1]);
             return (1);
         }
     }
