@@ -57,13 +57,25 @@ char ***put_args(char **av, int *nbr_args, int nbr_command)
     return (tmp);
 }
 
+int check_error_pipe(char *str, int i)
+{
+    for (; str[i] != '\0'; i++) {
+        if (str[i] != ' ' && str[i] != '|')
+            return (0);
+    }
+    return (84);
+}
+
 int count_commands(char *str)
 {
     int counter = 1;
 
     for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] == '|')
+        if (str[i] == '|') {
+            if (check_error_pipe(str, i) == 84)
+                return (84);
             counter++;
+        }
     }
     return (counter);
 }
@@ -83,7 +95,7 @@ char **get_tab_command(struct data data, char *str)
     int b = 0;
     data.command[a] = malloc(sizeof(char) * get_length_one_command(str, 0));
 
-    for (int i = 0; str[i] != '\0'; i++) {
+    for (int i = 0; str[i] != '\0' && str[i + 1] != '>'; i++) {
         if (str[i + 1] == '|') {
             data.command[a][b] = '\0';
             a++;
@@ -120,6 +132,32 @@ char *get_actual_command_line(char *str)
     return (actual);
 }
 
+int is_redirection(char *actual)
+{
+    for (int i = 0; actual[i] != '\0'; i++) {
+        if (actual[i] == '>')
+            return (1);
+    }
+    return (0);
+}
+
+char *get_redirection_name(char *actual)
+{
+    int i = 0;
+    int a = 0;
+    char *str = malloc(sizeof(char) * my_strlen(actual));
+
+    for (; actual[i] != '>'; i++);
+    i++;
+    for (; actual[i] == ' '; i++);
+    for (; actual[i] != '\0'; i++) {
+        str[a] = actual[i];
+        a++;
+    }
+    str[a] = '\0';
+    return (str);
+}
+
 int main_loop(struct data data)
 {
     char *str = "lucas";
@@ -135,16 +173,23 @@ int main_loop(struct data data)
             while (actual != NULL) {
                 actual = remove_useless(actual);
                 data.nbr_command = count_commands(actual);
-                data.command = malloc(sizeof(char *) * data.nbr_command);
-                data.command = get_tab_command(data, actual);
-                data.nbr_args = malloc(sizeof(int) * data.nbr_command);
-                for (int i = 0; i < data.nbr_command; i++)
-                    data.nbr_args[i] = get_nbr_args(data.command[i]);
-                data.args = put_args(data.command, data.nbr_args, data.nbr_command);
-                for (int i = 0; i < data.nbr_command; i++)
-                    data.command[i] = get_program_name(data.command[i]);
-                data.exit_status = find_command(data);
-                //free_command(data, actual);
+                data.redirection = is_redirection(actual);
+                if (data.nbr_command == 84)
+                    my_putstr_err("Invalid null command.\n");
+                else {
+                    data.command = malloc(sizeof(char *) * data.nbr_command);
+                    data.command = get_tab_command(data, actual);
+                    if (data.redirection == 1)
+                        data.redirection_name = get_redirection_name(actual);
+                    data.nbr_args = malloc(sizeof(int) * data.nbr_command);
+                    for (int i = 0; i < data.nbr_command; i++)
+                        data.nbr_args[i] = get_nbr_args(data.command[i]);
+                    data.args = put_args(data.command, data.nbr_args, data.nbr_command);
+                    for (int i = 0; i < data.nbr_command; i++)
+                        data.command[i] = get_program_name(data.command[i]);
+                    data.exit_status = find_command(data);
+                    free_command(data, actual);
+                }
                 actual = get_actual_command_line(str);
             }
         }

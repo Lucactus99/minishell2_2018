@@ -34,6 +34,8 @@ struct data
     int exit_status;
     char **command;
     int nbr_command;
+    int redirection;
+    char *redirection_name;
 };
 
 

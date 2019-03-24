@@ -12,6 +12,7 @@ void do_command_3(struct data data)
     int status;
     int i;
     int pipes[4];
+    int out = open(data.redirection_name, O_RDWR|O_CREAT|O_APPEND, 0600);
 
     pipe(pipes);
     pipe(pipes + 2);
@@ -34,6 +35,9 @@ void do_command_3(struct data data)
         } else {
             if (fork() == 0) {
                 dup2(pipes[2], 0);
+                if (data.redirection == 1) {
+                    dup2(out, 1);
+                }
                 close(pipes[0]);
                 close(pipes[1]);
                 close(pipes[2]);
@@ -55,6 +59,7 @@ void do_command_2(struct data data)
     int status;
     int i;
     int pipes[2];
+    int out = open(data.redirection_name, O_RDWR|O_CREAT|O_APPEND, 0600);
 
     pipe(pipes);
     if (fork() == 0) {
@@ -65,6 +70,9 @@ void do_command_2(struct data data)
     } else {
         if (fork() == 0) {
             dup2(pipes[0], 0);
+            if (data.redirection == 1) {
+                dup2(out, 1);
+            }
             close(pipes[0]);
             close(pipes[1]);
             execve(data.command[1], data.args[1], data.env);
@@ -120,7 +128,7 @@ int find_command_2(struct data data)
             ok = 1;
         } else {
             if (is_existing(data, data.command[i]) == NULL) {
-                my_putstr_err(data.program_name);
+                my_putstr_err(data.command[i]);
                 my_putstr_err(": Command not found.\n");
                 data.exit_status = 1;
                 ok = 1;

@@ -9,10 +9,10 @@
 
 void free_command(struct data data, char *str)
 {
-    // free(data.program_name);
-    // free(str);
-    // for (int i = 1; i < data.nbr_args[]; i++)
-    //     free(data.args[i]);
+    for (int i = 0; i < data.nbr_command; i++) {
+        free(data.command[i]);
+    }
+    free(str);
 }
 
 int count_lines(char *str)
