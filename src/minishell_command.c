@@ -7,13 +7,24 @@
 
 #include "my.h"
 
+int open_type(int type, char *filename)
+{
+    if (type == 1)
+        return (open(filename, O_CREAT|O_RDWR|O_TRUNC, 0644));
+    else if (type == 2)
+        return (open(filename, O_CREAT|O_RDWR|O_APPEND, 0644));
+    return (-1);
+}
+
 void do_command_3(struct data data)
 {
     int status;
     int i;
     int pipes[4];
-    int out = open(data.redirection_name, O_RDWR|O_CREAT|O_APPEND, 0600);
+    int out = open_type(data.redirection, data.redirection_name);
 
+    if (out < 0)
+        exit(84);
     pipe(pipes);
     pipe(pipes + 2);
     if (fork() == 0) {
@@ -35,7 +46,7 @@ void do_command_3(struct data data)
         } else {
             if (fork() == 0) {
                 dup2(pipes[2], 0);
-                if (data.redirection == 1) {
+                if (data.redirection != 0) {
                     dup2(out, 1);
                 }
                 close(pipes[0]);
@@ -59,8 +70,10 @@ void do_command_2(struct data data)
     int status;
     int i;
     int pipes[2];
-    int out = open(data.redirection_name, O_RDWR|O_CREAT|O_APPEND, 0600);
+    int out = open_type(data.redirection, data.redirection_name);
 
+    if (out < 0)
+        exit(84);
     pipe(pipes);
     if (fork() == 0) {
         dup2(pipes[1], 1);
@@ -70,7 +83,7 @@ void do_command_2(struct data data)
     } else {
         if (fork() == 0) {
             dup2(pipes[0], 0);
-            if (data.redirection == 1) {
+            if (data.redirection != 0) {
                 dup2(out, 1);
             }
             close(pipes[0]);
@@ -86,15 +99,20 @@ void do_command_2(struct data data)
 
 int do_command(struct data data)
 {
-    int c_pid = fork();
     int status;
+    int pipes[2];
+    int out = open_type(data.redirection, data.redirection_name);
 
-    if (c_pid == 0 && data.path[0] != NULL) {
+    if (out < 0 && data.redirection != 0)
+        exit(84);
+    if (fork() == 0 && data.path[0] != NULL) {
         for (int i = 0; i < data.nbr_command; i++) {
             if (my_strncmp(data.command[i], "./", 2) == 0)
                 do_binary(data, i);
         }
         if (data.nbr_command == 1) {
+            if (data.redirection != 0)
+                dup2(out, 1);
             if (execve(data.command[0], data.args[0], data.env) <= 0) {
                 my_putstr_err(data.command[0]);
                 my_putstr_err(": Permission denied.\n");
@@ -105,7 +123,7 @@ int do_command(struct data data)
             do_command_3(data);
         }
         exit(1);
-    } else if (c_pid > 0)
+    } else
         wait(&status);
     data.exit_status = WEXITSTATUS(status);
     if (WIFSIGNALED(status) == 1) {

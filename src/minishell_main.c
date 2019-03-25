@@ -135,10 +135,16 @@ char *get_actual_command_line(char *str)
 int is_redirection(char *actual)
 {
     for (int i = 0; actual[i] != '\0'; i++) {
-        if (actual[i] == '>')
+        if (actual[i] == '>') {
+            if (actual[i + 1] == '>')
+                return (2);
             return (1);
-        if (actual[i] == '<')
+        }
+        if (actual[i] == '<') {
+            if (actual[i + 1] == '<')
+                return (4);
             return (3);
+        }
     }
     return (0);
 }
@@ -151,6 +157,12 @@ char *get_redirection_name(char *actual)
 
     for (; actual[i] != '>' && actual[i] != '<'; i++);
     i++;
+    if (actual[i] == '>' || actual[i] == '<')
+        i++;
+    if (actual[i] == '>' || actual[i] == '<') {
+        my_putstr_err("Missing name for redirect.\n");
+        return (NULL);
+    }
     for (; actual[i] == ' '; i++);
     for (; actual[i] != '\0'; i++) {
         str[a] = actual[i];
@@ -215,10 +227,10 @@ int main_loop(struct data data)
                 else {
                     data.command = malloc(sizeof(char *) * data.nbr_command);
                     data.command = get_tab_command(data, actual);
-                    if (data.redirection == 1 || data.redirection == 3) {
+                    if (data.redirection >= 1 && data.redirection <= 4) {
                         data.redirection_name = get_redirection_name(actual);
                         if (is_ambiguous(actual) == NULL) {
-                            my_putstr("Ambiguous output redirect.\n");
+                            my_putstr_err("Ambiguous output redirect.\n");
                             data.redirection_name = is_ambiguous(actual);
                         }
                     }
