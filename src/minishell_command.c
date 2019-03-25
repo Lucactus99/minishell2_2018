@@ -11,7 +11,7 @@ int open_type(int type, char *filename)
 {
     if (type == 1)
         return (open(filename, O_CREAT|O_RDWR|O_TRUNC, 0644));
-    else if (type == 2)
+    if (type == 2)
         return (open(filename, O_CREAT|O_RDWR|O_APPEND, 0644));
     return (-1);
 }
@@ -46,9 +46,8 @@ void do_command_3(struct data data)
         } else {
             if (fork() == 0) {
                 dup2(pipes[2], 0);
-                if (data.redirection != 0) {
+                if (data.redirection != 0)
                     dup2(out, 1);
-                }
                 close(pipes[0]);
                 close(pipes[1]);
                 close(pipes[2]);
@@ -83,9 +82,8 @@ void do_command_2(struct data data)
     } else {
         if (fork() == 0) {
             dup2(pipes[0], 0);
-            if (data.redirection != 0) {
+            if (data.redirection != 0)
                 dup2(out, 1);
-            }
             close(pipes[0]);
             close(pipes[1]);
             execve(data.command[1], data.args[1], data.env);
@@ -100,7 +98,6 @@ void do_command_2(struct data data)
 int do_command(struct data data)
 {
     int status;
-    int pipes[2];
     int out = open_type(data.redirection, data.redirection_name);
 
     if (out < 0 && data.redirection != 0)

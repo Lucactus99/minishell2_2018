@@ -227,7 +227,7 @@ int main_loop(struct data data)
                 else {
                     data.command = malloc(sizeof(char *) * data.nbr_command);
                     data.command = get_tab_command(data, actual);
-                    if (data.redirection >= 1 && data.redirection <= 4) {
+                    if (data.redirection == 1 || data.redirection == 2) {
                         data.redirection_name = get_redirection_name(actual);
                         if (is_ambiguous(actual) == NULL) {
                             my_putstr_err("Ambiguous output redirect.\n");
@@ -239,11 +239,6 @@ int main_loop(struct data data)
                         for (int i = 0; i < data.nbr_command; i++)
                             data.nbr_args[i] = get_nbr_args(data.command[i]);
                         data.args = put_args(data.command, data.nbr_args, data.nbr_command);
-                        if (data.redirection == 3) {
-                            data.command[data.nbr_command - 1] = my_strcat(data.command[data.nbr_command - 1], " ");
-                            data.nbr_args[data.nbr_command - 1] = get_nbr_args(my_strcat(data.command[data.nbr_command - 1], get_buffer(data.redirection_name))) + 1;
-                            data.args[data.nbr_command - 1] = transform_2d(get_buffer(data.redirection_name));
-                        }
                         for (int i = 0; i < data.nbr_command; i++)
                             data.command[i] = get_program_name(data.command[i]);
                         data.exit_status = find_command(data);
@@ -278,6 +273,7 @@ int main(int ac, char **av, char **env)
     (void)ac;
     (void)av;
     data.exit_status = 0;
+    data.redirection_name = NULL;
     if (env[0] == 0)
         env = new_path_to_env(env);
     data.path = get_path(env);
