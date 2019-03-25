@@ -9,19 +9,19 @@
 
 int do_binary(struct data data, int command)
 {
-    data.program_name += 2;
-    if (execve(data.program_name, data.args[command], data.env) <= 0) {
+    data.command[command] += 2;
+    if (execve(data.command[command], data.args[command], data.env) <= 0) {
         if (errno == 8) {
             my_putstr_err("./");
-            my_putstr_err(data.program_name);
+            my_putstr_err(data.command[command]);
             my_putstr_err(": Exec format error. Wrong Architecture.\n");
         } else if (errno == 2) {
             my_putstr_err("./");
-            my_putstr_err(data.program_name);
+            my_putstr_err(data.command[command]);
             my_putstr_err(": Command not found.\n");
         } else {
             my_putstr_err("./");
-            my_putstr_err(data.program_name);
+            my_putstr_err(data.command[command]);
             my_putstr_err(": Permission denied.\n");
         }
     }
@@ -95,7 +95,7 @@ char **get_tab_command(struct data data, char *str)
     int b = 0;
     data.command[a] = malloc(sizeof(char) * get_length_one_command(str, 0));
 
-    for (int i = 0; str[i] != '\0' && str[i + 1] != '>'; i++) {
+    for (int i = 0; str[i] != '\0' && str[i + 1] != '>' && str[i + 1] != '<'; i++) {
         if (str[i + 1] == '|') {
             data.command[a][b] = '\0';
             a++;
@@ -137,6 +137,8 @@ int is_redirection(char *actual)
     for (int i = 0; actual[i] != '\0'; i++) {
         if (actual[i] == '>')
             return (1);
+        if (actual[i] == '<')
+            return (3);
     }
     return (0);
 }
@@ -147,7 +149,7 @@ char *get_redirection_name(char *actual)
     int a = 0;
     char *str = malloc(sizeof(char) * my_strlen(actual));
 
-    for (; actual[i] != '>'; i++);
+    for (; actual[i] != '>' && actual[i] != '<'; i++);
     i++;
     for (; actual[i] == ' '; i++);
     for (; actual[i] != '\0'; i++) {
@@ -155,6 +157,40 @@ char *get_redirection_name(char *actual)
         a++;
     }
     str[a] = '\0';
+    if (my_strlen(str) <= 1) {
+        my_putstr_err("Missing name for redirect.\n");
+        return (NULL);
+    }
+    return (str);
+}
+
+char *get_buffer(char *filename)
+{
+    int out = open(filename, O_RDWR|O_CREAT|O_APPEND, 0600);
+    char *buff = malloc(sizeof(char) * 20);
+    int i = 0;
+
+    read(out, buff, 20);
+    for (; buff[i] > 20; i++);
+    buff[i] = '\0';
+    return (buff);
+}
+
+char *is_ambiguous(char *str)
+{
+    int pipe = 0;
+    int redirection = 100;
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == '|')
+            pipe++;
+        else if (str[i] == '>' || str[i] == '<') {
+            if (pipe < redirection)
+                redirection = pipe;
+        }
+        if (pipe > redirection)
+            return (NULL);
+    }
     return (str);
 }
 
@@ -179,16 +215,28 @@ int main_loop(struct data data)
                 else {
                     data.command = malloc(sizeof(char *) * data.nbr_command);
                     data.command = get_tab_command(data, actual);
-                    if (data.redirection == 1)
+                    if (data.redirection == 1 || data.redirection == 3) {
                         data.redirection_name = get_redirection_name(actual);
-                    data.nbr_args = malloc(sizeof(int) * data.nbr_command);
-                    for (int i = 0; i < data.nbr_command; i++)
-                        data.nbr_args[i] = get_nbr_args(data.command[i]);
-                    data.args = put_args(data.command, data.nbr_args, data.nbr_command);
-                    for (int i = 0; i < data.nbr_command; i++)
-                        data.command[i] = get_program_name(data.command[i]);
-                    data.exit_status = find_command(data);
-                    free_command(data, actual);
+                        if (is_ambiguous(actual) == NULL) {
+                            my_putstr("Ambiguous output redirect.\n");
+                            data.redirection_name = is_ambiguous(actual);
+                        }
+                    }
+                    if (data.redirection_name != NULL || data.redirection == 0) {
+                        data.nbr_args = malloc(sizeof(int) * data.nbr_command);
+                        for (int i = 0; i < data.nbr_command; i++)
+                            data.nbr_args[i] = get_nbr_args(data.command[i]);
+                        data.args = put_args(data.command, data.nbr_args, data.nbr_command);
+                        if (data.redirection == 3) {
+                            data.command[data.nbr_command - 1] = my_strcat(data.command[data.nbr_command - 1], " ");
+                            data.nbr_args[data.nbr_command - 1] = get_nbr_args(my_strcat(data.command[data.nbr_command - 1], get_buffer(data.redirection_name))) + 1;
+                            data.args[data.nbr_command - 1] = transform_2d(get_buffer(data.redirection_name));
+                        }
+                        for (int i = 0; i < data.nbr_command; i++)
+                            data.command[i] = get_program_name(data.command[i]);
+                        data.exit_status = find_command(data);
+                        free_command(data, actual);
+                    }
                 }
                 actual = get_actual_command_line(str);
             }

@@ -54,10 +54,7 @@ int check_error_path(char *str)
 char *is_existing(struct data data, char *actual)
 {
     char *tmp;
-    char *binary = "binary";
 
-    if (my_strncmp(actual, "./", 2) == 0)
-        return (binary);
     if (access(actual, F_OK) == 0) {
         tmp = malloc(sizeof(char) * my_strlen(actual) + 1);
         tmp = my_strcpy(tmp, actual);
