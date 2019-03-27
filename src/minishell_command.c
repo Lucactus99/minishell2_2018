@@ -13,7 +13,7 @@ int open_type(int type, char *filename)
         return (open(filename, O_CREAT|O_RDWR|O_TRUNC, 0644));
     if (type == 2)
         return (open(filename, O_CREAT|O_RDWR|O_APPEND, 0644));
-    return (-1);
+    return (0);
 }
 
 void do_command_3(struct data data)
