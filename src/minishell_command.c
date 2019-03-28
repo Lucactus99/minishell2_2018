@@ -114,11 +114,10 @@ int do_command(struct data data)
                 my_putstr_err(data.command[0]);
                 my_putstr_err(": Permission denied.\n");
             }
-        } else if (data.nbr_command == 2) {
+        } else if (data.nbr_command == 2)
             do_command_2(data);
-        } else {
+        else
             do_command_3(data);
-        }
         exit(1);
     } else
         wait(&status);

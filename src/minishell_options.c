@@ -7,6 +7,21 @@
 
 #include "my.h"
 
+static char *put_space(char *new_str, char *str, int *a, int i)
+{
+    if (str[i - 1] != ' ') {
+        new_str[a[0]] = ' ';
+        a[0]++;
+    }
+    new_str[a[0]] = str[i];
+    a[0]++;
+    if (str[i + 1] != ' ') {
+        new_str[a[0]] = ' ';
+        a[0]++;
+    }
+    return (new_str);
+}
+
 char *useless_pipe(char *str)
 {
     char *new_str = malloc(sizeof(char) * (my_strlen(str) + 1));
@@ -14,16 +29,7 @@ char *useless_pipe(char *str)
 
     for (int i = 0; str[i] != '\0'; i++) {
         if (str[i] == '|') {
-            if (str[i - 1] != ' ') {
-                new_str[a] = ' ';
-                a++;
-            }
-            new_str[a] = str[i];
-            a++;
-            if (str[i + 1] != ' ') {
-                new_str[a] = ' ';
-                a++;
-            }
+            new_str = put_space(new_str, str, &a, i);
         } else {
             new_str[a] = str[i];
             a++;
@@ -52,43 +58,6 @@ char *remove_useless(char *str)
     for (int d = my_strlen(new_str) - 1; new_str[d] == ' '; d--)
         new_str[d] = 0;
     return (useless_pipe(new_str));
-}
-
-void print_error_6(int status)
-{
-    if (WTERMSIG(status) == 44)
-        my_putstr_err("Signal 44\n");
-    if (WTERMSIG(status) == 45)
-        my_putstr_err("Signal 45\n");
-    if (WTERMSIG(status) == 46)
-        my_putstr_err("Signal 46\n");
-    if (WTERMSIG(status) == 47)
-        my_putstr_err("Signal 47\n");
-    if (WTERMSIG(status) == 48)
-        my_putstr_err("Signal 48\n");
-}
-
-void print_error_5(int status)
-{
-    if (WTERMSIG(status) == 35)
-        my_putstr_err("Second Realtime Signal\n");
-    if (WTERMSIG(status) == 36)
-        my_putstr_err("Third Realtime Signal\n");
-    if (WTERMSIG(status) == 37)
-        my_putstr_err("Fourth Realtime Signal\n");
-    if (WTERMSIG(status) == 38)
-        my_putstr_err("Signal 38\n");
-    if (WTERMSIG(status) == 39)
-        my_putstr_err("Signal 39\n");
-    if (WTERMSIG(status) == 40)
-        my_putstr_err("Signal 40\n");
-    if (WTERMSIG(status) == 41)
-        my_putstr_err("Signal 41\n");
-    if (WTERMSIG(status) == 42)
-        my_putstr_err("Signal 42\n");
-    if (WTERMSIG(status) == 43)
-        my_putstr_err("Signal 43\n");
-    print_error_6(status);
 }
 
 char **add_env(struct data data, int command)

@@ -66,9 +66,10 @@ int cd_command(struct data data, int command)
 {
     char pwd[128];
 
-    if (data.args[command][1] == NULL || my_strcmp(data.args[command][1], "~") == 0)
+    if (data.args[command][1] == NULL ||
+    my_strcmp(data.args[command][1], "~") == 0) {
         return (cd_home_command(data, command));
-    else if (my_strcmp(data.args[command][1], "-") == 0)
+    } else if (my_strcmp(data.args[command][1], "-") == 0)
         return (cd_old_command(data));
     else {
         getcwd(pwd, sizeof(pwd));
