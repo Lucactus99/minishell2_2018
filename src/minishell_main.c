@@ -280,6 +280,7 @@ int main_loop(struct data data)
                 if (data.nbr_command == 84) {
                     my_putstr_err("Invalid null command.\n");
                     str = "lucas";
+                    data.exit_status = 1;
                 } else {
                     data.command = malloc(sizeof(char *) * data.nbr_command);
                     data.command = get_tab_command(data, actual);
@@ -289,14 +290,17 @@ int main_loop(struct data data)
                         if (my_strcmp("left", ambiguous) == 0) {
                             my_putstr_err("Ambiguous input redirect.\n");
                             data.redirection_name = NULL;
+                            data.exit_status = 1;
                         }
                         if (my_strcmp("right", ambiguous) == 0) {
                             my_putstr_err("Ambiguous output redirect.\n");
                             data.redirection_name = NULL;
+                            data.exit_status = 1;
                         }
                         if (my_strcmp("missing", ambiguous) == 0 && data.redirection_name != NULL) {
                             my_putstr_err("Missing name for redirect.\n");
                             data.redirection_name = NULL;
+                            data.exit_status = 1;
                         }
                     }
                     if (data.redirection_name != NULL || data.redirection == 0) {
