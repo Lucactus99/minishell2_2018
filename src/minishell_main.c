@@ -254,9 +254,6 @@ int main_loop(struct data data)
                             data.redirection_name = is_ambiguous(actual);
                         }
                     }
-                    if (data.redirection == 3) {
-                        printf("%s\n", data.redirection_name);
-                    }
                     if (data.redirection_name != NULL || data.redirection == 0) {
                         data.nbr_args = malloc(sizeof(int) * data.nbr_command);
                         for (int i = 0; i < data.nbr_command; i++)
