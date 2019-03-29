@@ -1,8 +1,8 @@
 /*
 ** EPITECH PROJECT, 2019
-** PSU_minishell1_2018
+** PSU_minishell2_2018
 ** File description:
-** minishell_main
+** main
 */
 
 #include "my.h"

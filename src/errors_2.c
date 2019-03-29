@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2019
 ** PSU_minishell2_2018
 ** File description:
-** minishell_errors_2
+** errors_2
 */
 
 #include "my.h"
