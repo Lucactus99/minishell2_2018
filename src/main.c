@@ -286,6 +286,8 @@ int main_loop(struct data data)
                     data.command = get_tab_command(data, actual);
                     if (data.redirection == 1 || data.redirection == 2 || data.redirection == 3 || data.redirection == 4) {
                         data.redirection_name = get_redirection_name(actual);
+                        if (data.redirection_name == NULL)
+                            data.exit_status = 1;
                         ambiguous = is_ambiguous(actual);
                         if (my_strcmp("left", ambiguous) == 0) {
                             my_putstr_err("Ambiguous input redirect.\n");
