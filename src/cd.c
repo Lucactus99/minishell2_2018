@@ -7,7 +7,7 @@
 
 #include "my.h"
 
-int cd_home_command(struct data data, int command)
+static int cd_home_command(struct data data, int command)
 {
     char pwd[128];
 
@@ -28,7 +28,7 @@ int cd_home_command(struct data data, int command)
     return (0);
 }
 
-int cd_old_command(struct data data)
+static int cd_old_command(struct data data)
 {
     char pwd[128];
 
@@ -47,7 +47,7 @@ int cd_old_command(struct data data)
     return (0);
 }
 
-void print_cd_err(char *str)
+static void print_cd_err(char *str)
 {
     if (errno == 20) {
         my_putstr_err(str);

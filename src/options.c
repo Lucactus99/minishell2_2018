@@ -22,7 +22,7 @@ static char *put_space(char *new_str, char *str, int *a, int i)
     return (new_str);
 }
 
-char *useless_pipe(char *str)
+static char *useless_pipe(char *str)
 {
     char *new_str = malloc(sizeof(char) * (my_strlen(str) + 1));
     int a = 0;

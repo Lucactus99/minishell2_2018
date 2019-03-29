@@ -7,7 +7,23 @@
 
 #include "my.h"
 
-void print_error_6(int status)
+int check_error_pipe(char *str, int i)
+{
+    for (; str[i] != '\0'; i++) {
+        if (str[i] != ' ' && str[i] != '|')
+            return (0);
+    }
+    return (84);
+}
+
+int put_command_not_found(struct data data, int i)
+{
+    my_putstr_err(data.command[i]);
+    my_putstr_err(": Command not found.\n");
+    return (1);
+}
+
+static void print_error_6(int status)
 {
     if (WTERMSIG(status) == 44)
         my_putstr_err("Signal 44\n");

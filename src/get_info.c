@@ -55,7 +55,7 @@ char **modify_path(struct data data, int command)
     return (data.path);
 }
 
-char **fill_path(char **path, char **env, int i)
+static char **fill_path(char **path, char **env, int i)
 {
     int a = 0;
     int b = 0;

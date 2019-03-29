@@ -59,16 +59,23 @@ int count_lines(char *);
 char **get_path(char **);
 char *get_program_name(char *);
 int get_nbr_args(char *);
-int kill(pid_t pid, int sig);
 char *is_existing(struct data, char *);
 char *remove_useless(char *);
 void print_error(int);
 void print_error_5(int);
+char *is_ambiguous(char *);
+int count_redirections(char *str);
+char ***put_args(char **, int *, int);
 
 // COMMANDS
 int do_command(struct data);
 int find_command(struct data);
-int do_binary(struct data, int);
+void do_command_simple_pipe(struct data);
+void do_command_double_pipes(struct data);
+int open_type(int, char *);
+char **get_tab_command(struct data, char *);
+char *get_actual_command_line(char *);
+int count_commands(char *);
 
 // ENV
 void print_env(char **);
@@ -89,5 +96,18 @@ char *get_home(char **);
 char *get_old_pwd(char **);
 char **put_old_pwd(char **, char *);
 int cd_command(struct data, int);
+
+// ERRORS
+void check_binary(struct data);
+int is_redirection(char *);
+int check_error_pipe(char *, int);
+int check_redirections(int, int, char *);
+int check_double_opposite_redirections(char *, int);
+struct data check_redirection_errors(struct data, char *);
+int put_command_not_found(struct data, int);
+
+// GLOBAL
+struct data manage_user_input(struct data, char *);
+struct data manage_redirection(struct data, char *);
 
 #endif //MY_H_

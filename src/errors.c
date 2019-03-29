@@ -7,7 +7,7 @@
 
 #include "my.h"
 
-void print_error_4(int status)
+static void print_error_4(int status)
 {
     if (WTERMSIG(status) == 25)
         my_putstr_err("Filesize limit exceeded\n");
@@ -30,7 +30,7 @@ void print_error_4(int status)
     print_error_5(status);
 }
 
-void print_error_3(int status)
+static void print_error_3(int status)
 {
     if (WTERMSIG(status) == 11) {
         my_putstr_err("Segmentation fault");
@@ -54,7 +54,7 @@ void print_error_3(int status)
     print_error_4(status);
 }
 
-void print_error_2(int status)
+static void print_error_2(int status)
 {
     if (WTERMSIG(status) == 7) {
         my_putstr_err("Bus error");
