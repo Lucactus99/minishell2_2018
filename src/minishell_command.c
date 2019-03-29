@@ -168,8 +168,10 @@ int find_command(struct data data)
         } else {
             if (my_strcmp(data.command[i], "cd") == 0)
                 data.exit_status = cd_command(data, i);
-            else if (my_strcmp(data.command[i], "env") == 0)
+            else if (my_strcmp(data.command[i], "env") == 0) {
                 print_env(data.env);
+                data.exit_status = 0;
+            }
             else
                 ok = 1;
         }

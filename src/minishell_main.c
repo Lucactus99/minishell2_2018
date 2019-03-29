@@ -112,12 +112,25 @@ char **get_tab_command(struct data data, char *str)
     return (data.command);
 }
 
+int check_next_command(char *str, int nbr)
+{
+    for (int i = nbr; str[i] != '\0'; i++) {
+        if (str[i] != ' ' && str[i] != ';')
+            return (nbr + 1);
+    }
+    return (84);
+}
+
 char *get_actual_command_line(char *str)
 {
-    char *actual = malloc(sizeof(char) * my_strlen(str));
+    char *actual;
     static int i = 0;
     int a = 0;
 
+    if (str == NULL || i == 84)
+        return (NULL);
+    else
+        actual = malloc(sizeof(char) * my_strlen(str));
     if (str[i] == '\0') {
         i = 0;
         return (NULL);
@@ -126,8 +139,9 @@ char *get_actual_command_line(char *str)
         actual[a] = str[i];
         a++;
     }
-    if (str[i] != '\0')
-        i++;
+    if (str[i] != '\0') {
+        i = check_next_command(str, i);
+    }
     actual[a] = '\0';
     return (actual);
 }
@@ -155,7 +169,7 @@ char *get_redirection_name(char *actual)
     int a = 0;
     char *str = malloc(sizeof(char) * my_strlen(actual));
 
-    for (; actual[i] != '>' && actual[i] != '<'; i++);
+    for (; actual[i] != '>' && actual[i] != '<' && actual[i] != '\0'; i++);
     i++;
     if (actual[i] == '>' || actual[i] == '<')
         i++;
@@ -218,21 +232,30 @@ int main_loop(struct data data)
         str = get_next_line(0);
         if (str != NULL && str[0] != 0) {
             actual = get_actual_command_line(str);
+            if (count_commands(str) == 84) {
+                my_putstr_err("Invalid null command.\n");
+                actual = NULL;
+                data.exit_status = 1;
+            }
             while (actual != NULL) {
                 actual = remove_useless(actual);
                 data.nbr_command = count_commands(actual);
                 data.redirection = is_redirection(actual);
-                if (data.nbr_command == 84)
+                if (data.nbr_command == 84) {
                     my_putstr_err("Invalid null command.\n");
-                else {
+                    str = "lucas";
+                } else {
                     data.command = malloc(sizeof(char *) * data.nbr_command);
                     data.command = get_tab_command(data, actual);
-                    if (data.redirection == 1 || data.redirection == 2) {
+                    if (data.redirection == 1 || data.redirection == 2 || data.redirection == 3) {
                         data.redirection_name = get_redirection_name(actual);
                         if (is_ambiguous(actual) == NULL) {
                             my_putstr_err("Ambiguous output redirect.\n");
                             data.redirection_name = is_ambiguous(actual);
                         }
+                    }
+                    if (data.redirection == 3) {
+                        printf("%s\n", data.redirection_name);
                     }
                     if (data.redirection_name != NULL || data.redirection == 0) {
                         data.nbr_args = malloc(sizeof(int) * data.nbr_command);
