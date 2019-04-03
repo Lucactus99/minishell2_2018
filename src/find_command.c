@@ -43,8 +43,6 @@ static int check_cd_env(struct data data, int i)
 {
     if (my_strcmp(data.command[i], "cd") == 0)
         return (cd_command(data, i));
-    else if (my_strcmp(data.command[i], "env") == 0)
-        print_env(data.env);
     else
         return (-1);
     return (0);
@@ -61,6 +59,8 @@ int find_command(struct data data)
             ok = check_cd_env(data, i);
             if (ok != -1)
                 data.exit_status = ok;
+            if (ok == 2)
+                return (0);
         }
     }
     if (ok == -1)
