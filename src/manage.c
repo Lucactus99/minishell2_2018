@@ -13,15 +13,15 @@ static struct data manage_command_type(struct data data, char *actual)
         my_putstr_err("Invalid null command.\n");
         data.exit_status = 1;
     } else {
-        data.command = malloc(sizeof(char *) * data.nbr_command);
+        data.command = malloc(sizeof(char *) * (data.nbr_command + 1));
         data.command = get_tab_command(data, actual);
         data = manage_redirection(data, actual);
         if (data.redirection_name != NULL || data.redirection == 0) {
             data.nbr_args = malloc(sizeof(int) * data.nbr_command);
-            for (int i = 0; i < data.nbr_command; i++)
+            for (int i = 0; data.command[i]; i++)
                 data.nbr_args[i] = get_nbr_args(data.command[i]);
             data.args = put_args(data.command, data.nbr_args, data.nbr_command);
-            for (int i = 0; i < data.nbr_command; i++)
+            for (int i = 0; data.command[i]; i++)
                 data.command[i] = get_program_name(data.command[i]);
             data.exit_status = find_command(data);
             free_command(data, actual);

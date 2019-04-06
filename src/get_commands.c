@@ -29,20 +29,20 @@ int count_commands(char *str)
     return (counter);
 }
 
-int get_length_one_cmd(char *str)
+int get_length_one_cmd(char *str, int i)
 {
     int length = 0;
 
-    for (int i = 0; str[i] != '|' && str[i] != '\0'; i++)
+    for (; str[i] != '|' && str[i] != '\0'; i++)
         length++;
-    return (length);
+    return (++length);
 }
 
 char **get_tab_command(struct data data, char *str)
 {
     int a = 0;
     int b = 0;
-    data.command[a] = malloc(sizeof(char) * get_length_one_cmd(str));
+    data.command[a] = malloc(sizeof(char) * get_length_one_cmd(str, 0));
 
     for (int i = 0; str[i] != '\0' && str[i + 1] != '>' &&
     str[i + 1] != '<'; i++) {
@@ -51,7 +51,7 @@ char **get_tab_command(struct data data, char *str)
             a++;
             i += 2;
             b = 0;
-            data.command[a] = malloc(sizeof(char) * get_length_one_cmd(str));
+            data.command[a] = malloc(sizeof(char) * get_length_one_cmd(str, i));
         } else {
             data.command[a][b] = str[i];
             b++;
@@ -73,7 +73,7 @@ static int check_next_command(char *str, int nbr)
 
 char *get_actual_command_line(char *str)
 {
-    char *actual;
+    char *actual = NULL;
     static int i = 0;
     int a = 0;
 
@@ -81,7 +81,7 @@ char *get_actual_command_line(char *str)
         i = 0;
         return (NULL);
     } else
-        actual = malloc(sizeof(char) * my_strlen(str));
+        actual = malloc(sizeof(char) * (my_strlen(str) + 1));
     for (; str[i] != '\0' && str[i] != ';'; i++) {
         actual[a] = str[i];
         a++;

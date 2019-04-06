@@ -75,6 +75,7 @@ int unsetenv_command(struct data data, int command)
 void print_env(char **env, struct data data)
 {
     int pipes[2];
+    int status;
 
     if (data.nbr_command == 2) {
         data.command[1] = is_existing(data, data.command[1]);
@@ -82,21 +83,22 @@ void print_env(char **env, struct data data)
         if (fork() == 0) {
             dup2(pipes[1], 1);
             close(pipes[0]);
-            close(pipes[1]);
-            for (int i = 0; env[i] != 0; i++) {
+            for (int i = 0; env[i] != NULL; i++) {
                 my_putstr(env[i]);
                 my_putchar('\n');
             }
+            exit(0);
         } else {
             if (fork() == 0) {
                 dup2(pipes[0], 0);
                 close(pipes[0]);
-                close(pipes[1]);
                 execve(data.command[1], data.args[1], data.env);
+            } else {
+                wait(NULL);
+                close(pipes[1]);
+                close(pipes[0]);
             }
         }
-        close(pipes[0]);
-        close(pipes[1]);
     } else {
         for (int i = 0; env[i] != 0; i++) {
             my_putstr(env[i]);

@@ -36,7 +36,7 @@ static void check_command(struct data data)
             dup2(out, 1);
         if (data.redirection == 3 || data.redirection == 4)
             data.args[0] = add_args(data.args[0], data.redirection_name);
-        if (execve(data.command[0], data.args[0], data.env) <= 0) {
+        if (execve(data.command[0], data.args[0], data.env) < 0) {
             my_putstr_err(data.command[0]);
             my_putstr_err(": Permission denied.\n");
         }

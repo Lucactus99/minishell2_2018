@@ -52,7 +52,7 @@ int my_strncmp(char const *, char const *, int);
 void my_putchar_err(char);
 int my_putstr_err(char const *);
 int my_str_isalpha(char const *);
-char **transform_2d(char *str);
+char **transform_2d(char *str, char sep);
 
 // USEFUL
 void free_command(struct data, char *);

@@ -55,35 +55,15 @@ char **modify_path(struct data data, int command)
     return (data.path);
 }
 
-static char **fill_path(char **path, char **env, int i)
-{
-    int a = 0;
-    int b = 0;
-
-    for (int j = 5; env[i][j] != 0; j++) {
-        if (env[i][j] == ':') {
-            a++;
-            b = 0;
-        } else {
-            path[a][b] = env[i][j];
-            b++;
-        }
-    }
-    path[a + 1] = NULL;
-    return (path);
-}
-
 char **get_path(char **env)
 {
-    char **path;
+    char **path = NULL;
     int i = 0;
 
-    for (i = 0; my_strncmp(env[i], "PATH", 4) != 0; i++) {
-        if (env[i + 1] == NULL && my_strncmp(env[i], "PATH", 4) != 0)
+    for (i = 0; my_strncmp(env[i], "PATH=", 5) != 0; i++) {
+        if (env[i + 1] == NULL && my_strncmp(env[i], "PATH=", 5) != 0)
             return (NULL);
     }
-    path = malloc(sizeof(char *) * count_lines(env[i]));
-    for (int j = 0; j < count_lines(env[i]); j++)
-        path[j] = malloc(sizeof(char) * 20);
-    return (fill_path(path, env, i));
+    path = transform_2d(env[i], ':');
+    return (path);
 }

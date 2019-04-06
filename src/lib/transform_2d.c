@@ -7,18 +7,18 @@
 
 #include <stdlib.h>
 
-static int count_lines(char *str)
+static int count_lines(char *str, char sep)
 {
     int count = 0;
 
     for (int i = 0; str[i] != '\0'; i++) {
-        if ((str[i] == '\n' || str[i] == ' ') && str[i + 1] != '\0')
+        if ((str[i] == sep) && str[i + 1] != '\0')
             count++;
     }
     return (count);
 }
 
-static int strlen_line(char *str, int i)
+static int strlen_line(char *str, int i, char sep)
 {
     int count = 0;
     int a = 0;
@@ -26,13 +26,13 @@ static int strlen_line(char *str, int i)
     while (count < i) {
         if (str[a] == '\0')
             return (-1);
-        if ((str[a] == '\n' || str[a] == ' ') && str[a + 1] != '\0')
+        if (str[a] == sep && str[a + 1] != '\0')
             count++;
         a++;
     }
     count = 0;
     a++;
-    while ((str[a] != '\n' || str[a] == ' ') && str[a + 1] != '\0') {
+    while (str[a] != sep && str[a + 1] != '\0') {
         count++;
         a++;
     }
@@ -40,24 +40,25 @@ static int strlen_line(char *str, int i)
     return (count);
 }
 
-char **transform_2d(char *str)
+char **transform_2d(char *str, char sep)
 {
-    char **str_2d = malloc(sizeof(char *) * (count_lines(str) + 1));
+    char **str_2d = malloc(sizeof(char *) * (count_lines(str, sep) + 2));
     int j = 0;
     int k = 0;
+    int i = 0;
 
-    for (int i = 0; i < count_lines(str) + 1; i++)
-        str_2d[i] = malloc(sizeof(char) * (strlen_line(str, i) + 1));
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] == '\n' || str[i] == ' ') {
-            str_2d[j][k] = '\0';
+    for (; str[i] != '\0'; i++) {
+        if (str[i] == sep) {
+            str[i++] = '\0';
+            str_2d[j] = &str[k];
             j++;
-            k = 0;
-        } else {
-            str_2d[j][k] = str[i];
-            k++;
+            k = i;
         }
     }
-    str_2d[j + 1] = NULL;
+    str[i++] = '\0';
+    str_2d[j] = &str[k];
+    j++;
+    k = i;
+    str_2d[j] = NULL;
     return (str_2d);
 }

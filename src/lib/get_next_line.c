@@ -43,52 +43,56 @@ static char *my_strcat(char *str1, char *str2)
     return (result);
 }
 
-static void alloc_buffer(const int fd, char **buffer)
+static void alloc_buffer(const int fd, char *buffer)
 {
     int i;
 
-    *buffer = malloc(sizeof(char) * (READ_SIZE + 1));
-    if (*buffer == NULL)
-        return;
-    i = read(fd, *buffer, READ_SIZE);
+    for (size_t j = 0; j < READ_SIZE; j++)
+        buffer[j] = '\0';
+    i = read(fd, buffer, READ_SIZE);
     if (i < 0)
         return;
-    (*buffer)[i] = 0;
+    buffer[i] = '\0';
 }
 
-static int put_in_str(char **buffer, char **str)
+static int put_in_str(char *buffer, char **ptr)
 {
     int i = 0;
+    size_t j = 0;
+    size_t idx = 0;
+    char *str = malloc(sizeof(char) * (READ_SIZE + 2));
 
-    *str = malloc(sizeof(char) * (READ_SIZE + 1));
-    if (*str == NULL)
+    if (str == NULL)
         return (-1);
-    while (**buffer != 0 && (*(*buffer - 1) != '\n' || i == 0)) {
-        str[0][i] = **buffer;
-        (*buffer)++;
-        i++;
+    while (buffer[idx] && (!idx || buffer[idx - 1] != '\n')) {
+        str[i++] = buffer[idx++];
     }
+    str[i] = '\0';
+    *ptr = str;
+    for (; buffer[idx]; ++j) {
+        buffer[j] = buffer[idx++];        
+    }
+    buffer[j] = '\0';
     return (i);
 }
 
 char *get_next_line(int fd)
 {
-    static char *buffer;
-    char *str;
+    static char buffer[READ_SIZE + 1] = {0};
+    char *str = NULL;
     int i;
 
-    if (fd < 0)
+    if (fd < 0 || READ_SIZE <= 0)
         return (NULL);
     if (buffer == NULL || buffer[0] == 0)
-        alloc_buffer(fd, &buffer);
+        alloc_buffer(fd, buffer);
     if (buffer == NULL || buffer[0] == 0)
         return (NULL);
-    i = put_in_str(&buffer, &str);
+    i = put_in_str(buffer, &str);
     if (i < 0)
         return (NULL);
-    str[i] = 0;
     if (i != 0 && str[i - 1] == '\n')
-        str[i - 1] = 0;
+        str[i - 1] = '\0';
     else
         str = my_strcat(str, get_next_line(fd));
     return (str);
