@@ -43,8 +43,8 @@ char **unset_env(struct data data, int command)
 int setenv_command(struct data data, int command)
 {
     if (data.nbr_args[command] == 0) {
-        data.exit_status = print_env(data.env, data);
-        return (data.exit_status);
+        print_env(data.env);
+        return (0);
     }
     if (data.nbr_args[command] >= 3) {
         my_putstr_err("setenv: Too many arguments.\n");
@@ -84,14 +84,21 @@ void do_pipe(struct data data, int i)
         if (data.command[i + 1] != NULL)
             dup2(pipes[1], 1);
         else {
-            if (data.redirection != 0)
+            if (data.redirection != 0) 
                 dup2(out, 1);
         }
         close(pipes[0]);
         if (my_strcmp(data.command[i], "setenv") == 0)
-            print_env(data.env, data);
-        else
-            execve(data.command[i], data.args[i], data.env);
+            print_env(data.env);
+        else if (my_strncmp(data.command[i], "./", 2) == 0) {
+            do_binary(data, i);
+        }
+        else {
+            if (execve(data.command[i], data.args[i], data.env) < 0) {
+                my_putstr_err(data.command[0]);
+                my_putstr_err(": Permission denied.\n");
+            }
+        }
         exit(0);
     } else {
         wait(NULL);
@@ -102,14 +109,14 @@ void do_pipe(struct data data, int i)
             close(pipes[0]);
             close(fd_in);
         }
+        exit(0);
     }
 }
 
-int print_env(char **env, struct data data)
+void print_env(char **env)
 {
     for (int i = 0; env[i] != 0; i++) {
         my_putstr(env[i]);
         my_putchar('\n');
     }
-    return (0);
 }

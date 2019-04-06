@@ -7,7 +7,7 @@
 
 #include "my.h"
 
-static int do_binary(struct data data, int command)
+int do_binary(struct data data, int command)
 {
     data.command[command] += 2;
     if (execve(data.command[command], data.args[command], data.env) <= 0) {

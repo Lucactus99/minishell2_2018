@@ -44,10 +44,6 @@ static void check_command(struct data data)
         for (int i = 0; i < data.nbr_command; i++)
             do_pipe(data, i);
     }
-    // } else if (data.nbr_command == 2)
-    //     do_command_simple_pipe(data);
-    // else
-    //     do_command_double_pipes(data);
 }
 
 int do_command(struct data data)
@@ -55,8 +51,8 @@ int do_command(struct data data)
     int status;
 
     if (fork() == 0 && data.path[0] != NULL) {
-        check_binary(data);
         check_command(data);
+        check_binary(data);
         exit(0);
     } else
         wait(&status);

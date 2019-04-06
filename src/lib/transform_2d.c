@@ -18,28 +18,6 @@ static int count_lines(char *str, char sep)
     return (count);
 }
 
-static int strlen_line(char *str, int i, char sep)
-{
-    int count = 0;
-    int a = 0;
-
-    while (count < i) {
-        if (str[a] == '\0')
-            return (-1);
-        if (str[a] == sep && str[a + 1] != '\0')
-            count++;
-        a++;
-    }
-    count = 0;
-    a++;
-    while (str[a] != sep && str[a + 1] != '\0') {
-        count++;
-        a++;
-    }
-    count++;
-    return (count);
-}
-
 char **transform_2d(char *str, char sep)
 {
     char **str_2d = malloc(sizeof(char *) * (count_lines(str, sep) + 2));

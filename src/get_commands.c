@@ -40,12 +40,13 @@ int get_length_one_cmd(char *str, int i)
 
 char **get_tab_command(struct data data, char *str)
 {
+    int i = 0;
     int a = 0;
     int b = 0;
     data.command[a] = malloc(sizeof(char) * get_length_one_cmd(str, 0));
 
-    for (int i = 0; str[i] != '\0' && str[i + 1] != '>' &&
-    str[i + 1] != '<'; i++) {
+    for (; str[i] != '\0' && str[i] != '>' &&
+    str[i] != '<'; i++) {
         if (str[i + 1] == '|') {
             data.command[a][b] = '\0';
             a++;
@@ -56,6 +57,10 @@ char **get_tab_command(struct data data, char *str)
             data.command[a][b] = str[i];
             b++;
         }
+    }
+    if (str[i] == '>' || str[i] == '<') {
+        if (data.command[a][b - 1] == ' ')
+            b--;
     }
     data.command[a][b] = '\0';
     data.command[a + 1] = NULL;

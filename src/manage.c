@@ -20,7 +20,7 @@ static struct data manage_command_type(struct data data, char *actual)
             data.nbr_args = malloc(sizeof(int) * data.nbr_command);
             for (int i = 0; data.command[i]; i++)
                 data.nbr_args[i] = get_nbr_args(data.command[i]);
-            data.args = put_args(data.command, data.nbr_args, data.nbr_command);
+            data.args = put_args(data.command, data.nbr_command);
             for (int i = 0; data.command[i]; i++)
                 data.command[i] = get_program_name(data.command[i]);
             data.exit_status = find_command(data);

@@ -55,15 +55,38 @@ char **modify_path(struct data data, int command)
     return (data.path);
 }
 
+int get_nbr_lines(char **tab)
+{
+    int i = 0;
+
+    for (; tab[i] != NULL; i++);
+    return (++i);
+}
+
+char **my_strdup_2d(char **tab)
+{
+    char **tmp = malloc(sizeof(char *) * get_nbr_lines(tab));
+    int a = 0;
+
+    for (int i = 0; tab[i] != NULL; i++)
+        tmp[i] = malloc(sizeof(char) * (my_strlen(tab[i]) + 1));
+    for (; tab[a] != NULL; a++) {
+        tmp[a] = my_strcpy(tmp[a], tab[a]);
+    }
+    tmp[a] = NULL;
+    return (tmp);
+}
+
 char **get_path(char **env)
 {
+    char **tmp_env = my_strdup_2d(env);
     char **path = NULL;
     int i = 0;
 
-    for (i = 0; my_strncmp(env[i], "PATH=", 5) != 0; i++) {
-        if (env[i + 1] == NULL && my_strncmp(env[i], "PATH=", 5) != 0)
+    for (i = 0; my_strncmp(tmp_env[i], "PATH=", 5) != 0; i++) {
+        if (tmp_env[i + 1] == NULL && my_strncmp(tmp_env[i], "PATH=", 5) != 0)
             return (NULL);
     }
-    path = transform_2d(&env[i][5], ':');
+    path = transform_2d(&tmp_env[i][5], ':');
     return (path);
 }

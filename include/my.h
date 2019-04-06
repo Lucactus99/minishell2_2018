@@ -39,7 +39,6 @@ struct data
     int is_builtin;
 };
 
-void do_pipe(struct data data, int i);
 
 // LIB
 void my_putchar(char);
@@ -68,20 +67,20 @@ void print_error(int);
 void print_error_5(int);
 char *is_ambiguous(char *);
 int count_redirections(char *str);
-char ***put_args(char **, int *, int);
+char ***put_args(char **, int);
 
 // COMMANDS
 int do_command(struct data);
 int find_command(struct data);
-void do_command_simple_pipe(struct data);
-void do_command_double_pipes(struct data);
 int open_type(int, char *);
 char **get_tab_command(struct data, char *);
 char *get_actual_command_line(char *);
 int count_commands(char *);
+void do_pipe(struct data data, int i);
+int do_binary(struct data data, int command);
 
 // ENV
-int print_env(char **, struct data);
+void print_env(char **);
 char **add_env(struct data, int);
 int find_line_env(struct data, int);
 char **set_env(struct data, int);

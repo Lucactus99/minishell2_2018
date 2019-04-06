@@ -7,22 +7,8 @@
 
 #include "my.h"
 
-// static char ***malloc_tab_3d(int *nbr_args, int nbr_command)
-// {
-//     char ***tmp = malloc(sizeof(char **) * nbr_command);
-
-//     for (int i = 0; i < nbr_command; i++) {
-//         tmp[i] = malloc(sizeof(char *) * (nbr_args[i] + 1));
-//         for (int j = 0; j <= nbr_args[i] + 1; j++)
-//             tmp[i][j] = malloc(sizeof(char) * 20);
-//     }
-//     return (tmp);
-// }
-
-char ***put_args(char **av, int *nbr_args, int nbr_command)
+char ***put_args(char **av, int nbr_command)
 {
-    int j = 0;
-    int k = 0;
     char ***tmp = malloc(sizeof(char **) * nbr_command);
 
     for (int h = 0; av[h] != NULL; h++) {
