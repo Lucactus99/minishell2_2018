@@ -76,24 +76,31 @@ void print_env(char **env, struct data data)
 {
     int pipes[2];
 
-    data.command[1] = is_existing(data, data.command[1]);
-    pipe(pipes);
-    if (fork() == 0) {
-        dup2(pipes[1], 1);
+    if (data.nbr_command == 2) {
+        data.command[1] = is_existing(data, data.command[1]);
+        pipe(pipes);
+        if (fork() == 0) {
+            dup2(pipes[1], 1);
+            close(pipes[0]);
+            close(pipes[1]);
+            for (int i = 0; env[i] != 0; i++) {
+                my_putstr(env[i]);
+                my_putchar('\n');
+            }
+        } else {
+            if (fork() == 0) {
+                dup2(pipes[0], 0);
+                close(pipes[0]);
+                close(pipes[1]);
+                execve(data.command[1], data.args[1], data.env);
+            }
+        }
         close(pipes[0]);
         close(pipes[1]);
+    } else {
         for (int i = 0; env[i] != 0; i++) {
             my_putstr(env[i]);
             my_putchar('\n');
         }
-    } else {
-        if (fork() == 0) {
-            dup2(pipes[0], 0);
-            close(pipes[0]);
-            close(pipes[1]);
-            execve(data.command[1], data.args[1], data.env);
-        }
     }
-    close(pipes[0]);
-    close(pipes[1]);
 }
