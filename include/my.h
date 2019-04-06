@@ -36,6 +36,7 @@ struct data
     int nbr_command;
     int redirection;
     char *redirection_name;
+    int is_builtin;
 };
 
 // LIB
@@ -78,7 +79,7 @@ char *get_actual_command_line(char *);
 int count_commands(char *);
 
 // ENV
-void print_env(char **);
+void print_env(char **, struct data);
 char **add_env(struct data, int);
 int find_line_env(struct data, int);
 char **set_env(struct data, int);

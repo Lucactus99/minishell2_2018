@@ -11,7 +11,7 @@ static int do_binary(struct data data, int command)
 {
     data.command[command] += 2;
     if (execve(data.command[command], data.args[command], data.env) <= 0) {
-        if (errno == 8) {
+        if (errno == 8 || errno == 13) {
             my_putstr_err("./");
             my_putstr_err(data.command[command]);
             my_putstr_err(": Exec format error. Wrong Architecture.\n");
