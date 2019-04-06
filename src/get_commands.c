@@ -7,28 +7,6 @@
 
 #include "my.h"
 
-int count_commands(char *str)
-{
-    int counter = 1;
-    int neighbor = 0;
-
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] == '|') {
-            if (check_error_pipe(str, i) == 84)
-                return (84);
-            counter++;
-            neighbor++;
-        }
-        else {
-            if (neighbor == 3)
-                return (84);
-            else
-                neighbor = 0;
-        }
-    }
-    return (counter);
-}
-
 static int get_length_one(char *str, int i)
 {
     int length = 0;

@@ -75,13 +75,10 @@ char *get_program_name(char *av)
     return (str);
 }
 
-int get_nbr_args(char *av)
+int get_nbr_lines(char **tab)
 {
-    int count = 0;
+    int i = 0;
 
-    for (int i = 0; av[i] != 0; i++) {
-        if (av[i] == ' ')
-            count++;
-    }
-    return (count);
+    for (; tab[i] != NULL; i++);
+    return (++i);
 }

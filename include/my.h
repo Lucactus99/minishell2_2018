@@ -23,7 +23,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-
 struct data
 {
     char *program_name;
@@ -39,7 +38,6 @@ struct data
     char *redirection_name;
     int is_builtin;
 };
-
 
 // LIB
 void my_putchar(char);
@@ -69,6 +67,8 @@ void print_error_5(int);
 char *is_ambiguous(char *);
 int count_redirections(char *);
 char ***put_args(char **, int);
+char **add_args(char **, char *);
+int get_nbr_lines(char **);
 
 // COMMANDS
 int do_command(struct data);
@@ -77,8 +77,8 @@ int open_type(int, char *);
 char **get_tab_command(struct data, char *);
 char *get_actual_command_line(char *);
 int count_commands(char *);
-void do_pipe(struct data data, int i);
-int do_binary(struct data data, int command);
+void do_pipe(struct data, int);
+int do_binary(struct data, int);
 
 // ENV
 void print_env(char **);

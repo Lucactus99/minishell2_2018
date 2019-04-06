@@ -16,15 +16,50 @@ int open_type(int type, char *filename)
     return (0);
 }
 
-char **add_args(char **args, char *argument)
+int do_pipe_first(struct data data, int i, int pipes[], int out)
 {
-    int i = 0;
+    if (data.command[i + 1] != NULL)
+        dup2(pipes[1], 1);
+    else {
+        if (data.redirection != 0)
+            dup2(out, 1);
+    }
+    close(pipes[0]);
+    if (my_strcmp(data.command[i], "setenv") == 0)
+        print_env(data.env);
+    else if (my_strncmp(data.command[i], "./", 2) == 0)
+        do_binary(data, i);
+    else {
+        if (execve(data.command[i], data.args[i], data.env) < 0) {
+            my_putstr_err(data.command[0]);
+            my_putstr_err(": Permission denied.\n");
+        }
+    }
+    return (out);
+}
 
-    for (; args[i] != NULL; i++);
-    args[i] = malloc(sizeof(char *) * my_strlen(argument));
-    args[i] = my_strcpy(args[i], argument);
-    args[i + 1] = NULL;
-    return (args);
+void do_pipe(struct data data, int i)
+{
+    int pipes[2];
+    int out = open_type(data.redirection, data.redirection_name);
+    static int fd_in = 0;
+
+    pipe(pipes);
+    if (fork() == 0) {
+        dup2(fd_in, 0);
+        out = do_pipe_first(data, i, pipes, out);
+        exit(0);
+    } else {
+        wait(NULL);
+        close(pipes[1]);
+        fd_in = pipes[0];
+        if (data.command[i + 1] == NULL) {
+            close(out);
+            close(pipes[0]);
+            close(fd_in);
+            exit(0);
+        }
+    }
 }
 
 static void check_command(struct data data)

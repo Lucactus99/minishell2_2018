@@ -7,6 +7,28 @@
 
 #include "my.h"
 
+int get_nbr_args(char *av)
+{
+    int count = 0;
+
+    for (int i = 0; av[i] != 0; i++) {
+        if (av[i] == ' ')
+            count++;
+    }
+    return (count);
+}
+
+char **add_args(char **args, char *argument)
+{
+    int i = 0;
+
+    for (; args[i] != NULL; i++);
+    args[i] = malloc(sizeof(char *) * my_strlen(argument));
+    args[i] = my_strcpy(args[i], argument);
+    args[i + 1] = NULL;
+    return (args);
+}
+
 char ***put_args(char **av, int nbr_command)
 {
     char ***tmp = malloc(sizeof(char **) * nbr_command);
