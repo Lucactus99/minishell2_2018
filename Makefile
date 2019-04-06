@@ -10,7 +10,7 @@
 CC		:= gcc -g
 
 NAME		:= mysh
-FILES		:= cd command env errors_2 errors get_info get_put main options useful arguments binary command_double_pipes command_simple_pipe find_command get_commands manage redirections redirections_errors
+FILES		:= cd command env errors_2 errors get_info get_put main options useful arguments binary find_command get_commands manage redirections redirections_errors
 LIB_FILES       := get_next_line my_put_nbr my_putchar_err my_putchar my_putstr_err my_putstr my_str_isalpha my_strcat my_strcmp my_strcpy my_strncmp transform_2d
 
 SRC_NAMES 	:= $(addsuffix .c, $(FILES))

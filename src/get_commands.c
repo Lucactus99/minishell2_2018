@@ -29,7 +29,7 @@ int count_commands(char *str)
     return (counter);
 }
 
-int get_length_one_cmd(char *str, int i)
+static int get_length_one(char *str, int i)
 {
     int length = 0;
 
@@ -38,30 +38,36 @@ int get_length_one_cmd(char *str, int i)
     return (++length);
 }
 
-char **get_tab_command(struct data data, char *str)
+static char **loop_tab_command(struct data data, int *a, int *b, char *str)
 {
     int i = 0;
-    int a = 0;
-    int b = 0;
-    data.command[a] = malloc(sizeof(char) * get_length_one_cmd(str, 0));
 
-    for (; str[i] != '\0' && str[i] != '>' &&
-    str[i] != '<'; i++) {
+    for (; str[i] != '\0' && str[i] != '>' && str[i] != '<'; i++) {
         if (str[i + 1] == '|') {
-            data.command[a][b] = '\0';
-            a++;
+            data.command[a[0]][b[0]] = '\0';
+            a[0]++;
             i += 2;
-            b = 0;
-            data.command[a] = malloc(sizeof(char) * get_length_one_cmd(str, i));
+            b[0] = 0;
+            data.command[a[0]] = malloc(sizeof(char) * get_length_one(str, i));
         } else {
-            data.command[a][b] = str[i];
-            b++;
+            data.command[a[0]][b[0]] = str[i];
+            b[0]++;
         }
     }
     if (str[i] == '>' || str[i] == '<') {
-        if (data.command[a][b - 1] == ' ')
-            b--;
+        if (data.command[a[0]][b[0] - 1] == ' ')
+            b[0]--;
     }
+    return (data.command);
+}
+
+char **get_tab_command(struct data data, char *str)
+{
+    int a = 0;
+    int b = 0;
+
+    data.command[a] = malloc(sizeof(char) * get_length_one(str, 0));
+    data.command = loop_tab_command(data, &a, &b, str);
     data.command[a][b] = '\0';
     data.command[a + 1] = NULL;
     return (data.command);

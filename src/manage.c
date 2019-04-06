@@ -43,7 +43,7 @@ struct data manage_user_input(struct data data, char *str)
         data.exit_status = 1;
     }
     while (actual != NULL) {
-        actual = remove_useless(actual);
+        actual = clean_str(actual);
         data.nbr_command = count_commands(actual);
         data.redirection = is_redirection(actual);
         data = manage_command_type(data, actual);

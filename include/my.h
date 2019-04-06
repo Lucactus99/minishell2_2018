@@ -8,6 +8,7 @@
 #ifndef MY_H_
 #define MY_H_
 #define GNU_SOURCE
+#define IS_WHITESPACE(c) ((c) == '\t' || (c) == ' ' || (c) == '\n' || (c) == '\r' ? 1 : 0)
 
 #include <errno.h>
 #include <string.h>
@@ -53,7 +54,7 @@ int my_strncmp(char const *, char const *, int);
 void my_putchar_err(char);
 int my_putstr_err(char const *);
 int my_str_isalpha(char const *);
-char **transform_2d(char *str, char sep);
+char **transform_2d(char *, char);
 
 // USEFUL
 void free_command(struct data, char *);
@@ -62,11 +63,11 @@ char **get_path(char **);
 char *get_program_name(char *);
 int get_nbr_args(char *);
 char *is_existing(struct data, char *);
-char *remove_useless(char *);
+char *clean_str(char *);
 void print_error(int);
 void print_error_5(int);
 char *is_ambiguous(char *);
-int count_redirections(char *str);
+int count_redirections(char *);
 char ***put_args(char **, int);
 
 // COMMANDS

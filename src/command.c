@@ -32,6 +32,7 @@ static void check_command(struct data data)
     int out = open_type(data.redirection, data.redirection_name);
 
     if (data.nbr_command == 1) {
+        check_binary(data);
         if (data.redirection != 0)
             dup2(out, 1);
         if (data.redirection == 3 || data.redirection == 4)
@@ -52,7 +53,6 @@ int do_command(struct data data)
 
     if (fork() == 0 && data.path[0] != NULL) {
         check_command(data);
-        check_binary(data);
         exit(0);
     } else
         wait(&status);

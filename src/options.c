@@ -39,8 +39,6 @@ static char *useless_pipe(char *str)
     return (new_str);
 }
 
-#define IS_WHITESPACE(c) ((c) == ' ' || (c) == '\t' || (c) == '\n' || (c) == '\r' ? 1 : 0)
-
 char *clean_str(char *str)
 {
     size_t idx = 0;
@@ -53,29 +51,7 @@ char *clean_str(char *str)
         }
     }
     str[idx] = '\0';
-    return (str);
-}
-
-char *remove_useless(char *str)
-{
-    /*int i = 0;
-    int a = 0;
-    char *new_str = malloc(sizeof(char) * (my_strlen(str) + 1));
-
-    for (; str[0] == ' ' || str[0] == '\t'; str++);
-    for (; str[i] != '\0'; i++) {
-        if (str[i] == '\t')
-            str[i] = ' ';
-        if (((str[i] == ' ' || str[i] == '\t') && str[i + 1] != ' ' &&
-        str[i + 1] != '\t') || (str[i] != ' ' && str[i] != '\t')) {
-            new_str[a] = str[i];
-            a++;
-        }
-    }
-    new_str[a] = 0;
-    for (int d = my_strlen(new_str) - 1; new_str[d] == ' '; d--)
-        new_str[d] = 0;*/
-    return (useless_pipe(clean_str(str)));
+    return (useless_pipe(str));
 }
 
 char **add_env(struct data data, int command)

@@ -18,9 +18,8 @@ int pipe_after_redirection(char *str)
                 return (1);
             pipe++;
         }
-        if (str[i] == '>' || str[i] == '<') {
+        if (str[i] == '>' || str[i] == '<')
             redirection = pipe + 1;
-        }
     }
     return (0);
 }

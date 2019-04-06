@@ -70,7 +70,7 @@ static int put_in_str(char *buffer, char **ptr)
     str[i] = '\0';
     *ptr = str;
     for (; buffer[idx]; ++j) {
-        buffer[j] = buffer[idx++];        
+        buffer[j] = buffer[idx++];
     }
     buffer[j] = '\0';
     return (i);
