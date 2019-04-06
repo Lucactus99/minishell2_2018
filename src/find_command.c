@@ -12,9 +12,11 @@ static int find_command_2(struct data data)
     int ok = 0;
 
     for (int i = 0; i < data.nbr_command; i++) {
-        if (my_strcmp(data.command[i], "setenv") == 0) {
+        if (my_strcmp(data.command[i], "setenv") == 0 && data.nbr_command == 1) {
             ok = 1;
             data.exit_status = setenv_command(data, i);
+            if (data.exit_status == 1)
+                return (data.exit_status);
         } else if (my_strcmp(data.command[i], "unsetenv") == 0) {
             data.exit_status = unsetenv_command(data, i);
             ok = 1;

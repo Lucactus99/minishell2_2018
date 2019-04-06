@@ -46,7 +46,9 @@ int main(int ac, char **av, char **env)
     if (env[0] == 0)
         env = new_path_to_env(env);
     data.path = get_path(env);
+    printf("[%s]\n", data.path[0]);
     if (data.path == NULL) {
+    printf("[%s]\n", data.path[0]);
         env = new_path_to_env(env);
         data.path = get_path(env);
     }

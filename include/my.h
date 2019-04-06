@@ -39,6 +39,8 @@ struct data
     int is_builtin;
 };
 
+void do_pipe(struct data data, int i);
+
 // LIB
 void my_putchar(char);
 int my_putstr(char const *);
@@ -79,7 +81,7 @@ char *get_actual_command_line(char *);
 int count_commands(char *);
 
 // ENV
-void print_env(char **, struct data);
+int print_env(char **, struct data);
 char **add_env(struct data, int);
 int find_line_env(struct data, int);
 char **set_env(struct data, int);

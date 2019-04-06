@@ -64,6 +64,6 @@ char **get_path(char **env)
         if (env[i + 1] == NULL && my_strncmp(env[i], "PATH=", 5) != 0)
             return (NULL);
     }
-    path = transform_2d(env[i], ':');
+    path = transform_2d(&env[i][5], ':');
     return (path);
 }

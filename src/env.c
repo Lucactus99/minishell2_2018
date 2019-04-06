@@ -43,8 +43,8 @@ char **unset_env(struct data data, int command)
 int setenv_command(struct data data, int command)
 {
     if (data.nbr_args[command] == 0) {
-        print_env(data.env, data);
-        return (0);
+        data.exit_status = print_env(data.env, data);
+        return (data.exit_status);
     }
     if (data.nbr_args[command] >= 3) {
         my_putstr_err("setenv: Too many arguments.\n");
@@ -72,37 +72,44 @@ int unsetenv_command(struct data data, int command)
     return (0);
 }
 
-void print_env(char **env, struct data data)
+void do_pipe(struct data data, int i)
 {
     int pipes[2];
-    int status;
+    int out = open_type(data.redirection, data.redirection_name);
+    static int fd_in = 0;
 
-    if (data.nbr_command == 2) {
-        data.command[1] = is_existing(data, data.command[1]);
-        pipe(pipes);
-        if (fork() == 0) {
+    pipe(pipes);
+    if (fork() == 0) {
+        dup2(fd_in, 0);
+        if (data.command[i + 1] != NULL)
             dup2(pipes[1], 1);
-            close(pipes[0]);
-            for (int i = 0; env[i] != NULL; i++) {
-                my_putstr(env[i]);
-                my_putchar('\n');
-            }
-            exit(0);
-        } else {
-            if (fork() == 0) {
-                dup2(pipes[0], 0);
-                close(pipes[0]);
-                execve(data.command[1], data.args[1], data.env);
-            } else {
-                wait(NULL);
-                close(pipes[1]);
-                close(pipes[0]);
-            }
+        else {
+            if (data.redirection != 0)
+                dup2(out, 1);
         }
+        close(pipes[0]);
+        if (my_strcmp(data.command[i], "setenv") == 0)
+            print_env(data.env, data);
+        else
+            execve(data.command[i], data.args[i], data.env);
+        exit(0);
     } else {
-        for (int i = 0; env[i] != 0; i++) {
-            my_putstr(env[i]);
-            my_putchar('\n');
+        wait(NULL);
+        close(pipes[1]);
+        fd_in = pipes[0];
+        if (data.command[i + 1] == NULL) {
+            close(out);
+            close(pipes[0]);
+            close(fd_in);
         }
     }
+}
+
+int print_env(char **env, struct data data)
+{
+    for (int i = 0; env[i] != 0; i++) {
+        my_putstr(env[i]);
+        my_putchar('\n');
+    }
+    return (0);
 }

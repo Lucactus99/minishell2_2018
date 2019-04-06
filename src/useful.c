@@ -55,6 +55,8 @@ char *is_existing(struct data data, char *actual)
 {
     char *tmp;
 
+    if (my_strcmp("setenv", actual) == 0)
+        return (actual);
     if (access(actual, F_OK) == 0) {
         tmp = malloc(sizeof(char) * my_strlen(actual) + 1);
         tmp = my_strcpy(tmp, actual);
