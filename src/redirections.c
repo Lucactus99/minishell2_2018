@@ -7,35 +7,35 @@
 
 #include "my.h"
 
-int is_redirection(char *actual)
+static int is_redirection_left(char *actual, int i)
 {
-    for (int i = 0; actual[i] != '\0'; i++) {
-        if (actual[i] == '>') {
-            if (actual[i + 1] == '>')
-                return (2);
-            return (1);
-        }
-        if (actual[i] == '<') {
-            if (actual[i + 1] == '<')
-                return (4);
-            return (3);
-        }
+    if (actual[i] == '>') {
+        if (actual[i + 1] == '>')
+            return (2);
+        return (1);
     }
     return (0);
 }
 
-int count_redirections(char *str)
+static int is_redirection_right(char *actual, int i)
 {
-    int counter_left = 0;
-    int counter_right = 0;
-
-    for (int i = 0; str[i + 1] != '\0'; i++) {
-        if (str[i] == '>' && str[i + 1] != '>')
-            counter_right++;
-        if (str[i] == '<' && str[i + 1] != '<')
-            counter_left++;
+    if (actual[i] == '<') {
+        if (actual[i + 1] == '<')
+            return (4);
+        return (3);
     }
-    return (check_redirections(counter_right, counter_left, str));
+    return (0);
+}
+
+int is_redirection(char *actual)
+{
+    for (int i = 0; actual[i] != '\0'; i++) {
+        if (is_redirection_left(actual, i) > 0)
+            return (is_redirection_left(actual, i));
+        if (is_redirection_right(actual, i) > 0)
+            return (is_redirection_right(actual, i));
+    }
+    return (0);
 }
 
 static char *get_redirection_name(char *actual)

@@ -7,23 +7,6 @@
 
 #include "my.h"
 
-int pipe_after_redirection(char *str)
-{
-    int pipe = 0;
-    int redirection = 0;
-
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] == '|') {
-            if (redirection > pipe)
-                return (1);
-            pipe++;
-        }
-        if (str[i] == '>' || str[i] == '<')
-            redirection = pipe + 1;
-    }
-    return (0);
-}
-
 char *is_ambiguous(char *str)
 {
     if (count_redirections(str) == 1)

@@ -22,7 +22,7 @@ static char *put_space(char *new_str, char *str, int *a, int i)
     return (new_str);
 }
 
-static char *useless_pipe(char *str)
+char *useless_pipe(char *str)
 {
     char *new_str = malloc(sizeof(char) * (my_strlen(str) + 1));
     int a = 0;
@@ -39,21 +39,6 @@ static char *useless_pipe(char *str)
     return (new_str);
 }
 
-char *clean_str(char *str)
-{
-    size_t idx = 0;
-
-    for (size_t i = 0; str[i]; ++i) {
-        if (!IS_WHITESPACE(str[i])) {
-            str[idx++] = str[i];
-        } else if (idx && str[i + 1] && !IS_WHITESPACE(str[i + 1])) {
-            str[idx++] = ' ';
-        }
-    }
-    str[idx] = '\0';
-    return (useless_pipe(str));
-}
-
 char **add_env(struct data data, int command)
 {
     int j = 0;
@@ -68,24 +53,30 @@ char **add_env(struct data data, int command)
     return (data.env);
 }
 
+static int count_commands_type(char *str, int i, int *counter, int *neighbor)
+{
+    if (str[i] == '|') {
+        if (check_error_pipe(str, i) == 84)
+            return (84);
+        counter[0]++;
+        neighbor[0]++;
+    } else {
+        if (neighbor[0] == 3)
+            return (84);
+        else
+            neighbor[0] = 0;
+    }
+    return (0);
+}
+
 int count_commands(char *str)
 {
     int counter = 1;
     int neighbor = 0;
 
     for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] == '|') {
-            if (check_error_pipe(str, i) == 84)
-                return (84);
-            counter++;
-            neighbor++;
-        }
-        else {
-            if (neighbor == 3)
-                return (84);
-            else
-                neighbor = 0;
-        }
+        if (count_commands_type(str, i, &counter, &neighbor) == 84)
+            return (84);
     }
     return (counter);
 }

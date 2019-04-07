@@ -7,6 +7,20 @@
 
 #include "my.h"
 
+int count_redirections(char *str)
+{
+    int counter_left = 0;
+    int counter_right = 0;
+
+    for (int i = 0; str[i + 1] != '\0'; i++) {
+        if (str[i] == '>' && str[i + 1] != '>')
+            counter_right++;
+        if (str[i] == '<' && str[i + 1] != '<')
+            counter_left++;
+    }
+    return (check_redirections(counter_right, counter_left, str));
+}
+
 int check_error_pipe(char *str, int i)
 {
     for (; str[i] != '\0'; i++) {

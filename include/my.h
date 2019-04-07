@@ -8,7 +8,6 @@
 #ifndef MY_H_
 #define MY_H_
 #define GNU_SOURCE
-#define IS_WHITESPACE(c) ((c) == '\t' || (c) == ' ' || (c) == '\n' || (c) == '\r' ? 1 : 0)
 
 #include <errno.h>
 #include <string.h>
@@ -53,6 +52,7 @@ void my_putchar_err(char);
 int my_putstr_err(char const *);
 int my_str_isalpha(char const *);
 char **transform_2d(char *, char);
+int my_getnbr(char *);
 
 // USEFUL
 void free_command(struct data, char *);
@@ -69,6 +69,8 @@ int count_redirections(char *);
 char ***put_args(char **, int);
 char **add_args(char **, char *);
 int get_nbr_lines(char **);
+int is_builtin(struct data, int);
+char *useless_pipe(char *);
 
 // COMMANDS
 int do_command(struct data);
@@ -108,6 +110,7 @@ int check_redirections(int, int, char *);
 int check_double_opposite_redirections(char *, int);
 struct data check_redirection_errors(struct data, char *);
 int put_command_not_found(struct data, int);
+int pipe_after_redirection(char *);
 
 // GLOBAL
 struct data manage_user_input(struct data, char *);
