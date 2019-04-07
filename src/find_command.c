@@ -7,6 +7,14 @@
 
 #include "my.h"
 
+void free_command(struct data data, char *str)
+{
+    for (int i = 0; i < data.nbr_command; i++) {
+        free(data.command[i]);
+    }
+    free(str);
+}
+
 static struct data find_command_3(struct data data, int i, int *ok)
 {
     if (!my_strcmp(data.command[i], "setenv") && data.nbr_command == 1) {
@@ -56,7 +64,7 @@ int find_command(struct data data)
     int ok = 0;
 
     for (int i = 0; i < data.nbr_command; i++) {
-        if (my_strcmp(data.command[i], "exit") == 0)
+        if (my_strcmp(data.command[i], "exit") == 0 && data.nbr_command == 1)
             do_exit(data.args[i]);
         if (my_strcmp(data.command[i], "cd") == 0)
             return (cd_command(data, i));

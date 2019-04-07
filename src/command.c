@@ -27,6 +27,8 @@ int is_builtin(struct data data, int i)
         cd_command(data, i);
         return (1);
     }
+    if (my_strcmp(data.command[i], "exit") == 0)
+        return (1);
     return (0);
 }
 
