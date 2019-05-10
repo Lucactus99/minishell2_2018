@@ -7,6 +7,14 @@
 
 #include "my.h"
 
+void free_command(struct data data, char *str)
+{
+    for (int i = 0; i < data.nbr_command; i++) {
+        free(data.command[i]);
+    }
+    free(str);
+}
+
 int count_lines(char *str)
 {
     int count = 0;
@@ -43,12 +51,11 @@ int check_error_path(char *str)
     return (0);
 }
 
-static char *check_builtin_access(char *actual)
+char *is_existing(struct data data, char *actual)
 {
     char *tmp = NULL;
 
-    if (my_strcmp("setenv", actual) == 0 || my_strcmp("env", actual) == 0 ||
-    my_strcmp("exit", actual) == 0) {
+    if (my_strcmp("setenv", actual) == 0 || my_strcmp("env", actual) == 0) {
         return (actual);
     }
     if (access(actual, F_OK) == 0) {
@@ -56,15 +63,6 @@ static char *check_builtin_access(char *actual)
         tmp = my_strcpy(tmp, actual);
         return (tmp);
     }
-    return (NULL);
-}
-
-char *is_existing(struct data data, char *actual)
-{
-    char *tmp = NULL;
-
-    if (check_builtin_access(actual) != NULL)
-        return (check_builtin_access(actual));
     for (int i = 0; data.path[i] != NULL && data.path[i][0] != 0; i++) {
         tmp = malloc(sizeof(char) * 40);
         tmp = my_strcpy(tmp, data.path[i]);
